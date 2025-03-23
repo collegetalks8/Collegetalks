@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Talks</title>
+    <title>Anonymous Chat</title>
     <style>
         * {
             margin: 0;
@@ -93,13 +93,32 @@
 
         .post-content {
             word-wrap: break-word;
+            margin-bottom: 10px;
+        }
+
+        .like-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .like-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            color: #666;
+        }
+
+        .like-btn.liked {
+            color: #e0245e;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>College Talks</h1>
+            <h1>Anonymous Chat</h1>
         </div>
 
         <div class="post-form">
@@ -123,18 +142,21 @@
             onSnapshot, 
             query, 
             orderBy, 
-            limit 
+            limit,
+            doc,
+            updateDoc,
+            serverTimestamp
         } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
         // Your Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyA7PqMpPrJSJQijiwRDvNQNWp1An-1_49I",
-            authDomain: "college-talks-e708d.firebaseapp.com",
-            projectId: "college-talks-e708d",
-            storageBucket: "college-talks-e708d.firebasestorage.app",
-            messagingSenderId: "942444279085",
-            appId: "1:942444279085:web:7bc862682ee08c99c60fa4",
-            measurementId: "G-Y9FJ6S6L89"
+            apiKey: "AIzaSyDCFs2sB1l1LSq9N4wmIiHRGZ7rsdFuPs8",
+            authDomain: "anonymous-chat-76a85.firebaseapp.com",
+            projectId: "anonymous-chat-76a85",
+            storageBucket: "anonymous-chat-76a85.firebasestorage.app",
+            messagingSenderId: "748691544992",
+            appId: "1:748691544992:web:a9add57e30b1a2cf3c62c5",
+            measurementId: "G-B188J15SCN"
         };
 
         // Initialize Firebase
@@ -169,7 +191,9 @@
                     try {
                         await addDoc(collection(db, 'tweets'), {
                             content: content,
-                            timestamp: new Date()
+                            timestamp: serverTimestamp(), // Use server timestamp
+                            likes: 0, // Initialize likes count
+                            likedBy: [] // Array to track users who liked (using simple IP for demo)
                         });
                         console.log("Post added successfully");
                         postInput.value = '';
@@ -203,34 +227,86 @@
                 tweets.forEach(tweet => {
                     const postElement = document.createElement('div');
                     postElement.className = 'post';
-                    let timestamp;
-                    if (tweet.timestamp instanceof Date) {
-                        timestamp = tweet.timestamp.toLocaleString();
-                    } else if (tweet.timestamp && tweet.timestamp.toDate) {
-                        timestamp = tweet.timestamp.toDate().toLocaleString();
-                    } else {
-                        timestamp = new Date(tweet.timestamp).toLocaleString();
-                    }
+                    const timestamp = tweet.timestamp ? 
+                        new Date(tweet.timestamp.toMillis()).toLocaleString() : 
+                        'Just now';
                     
+                    const isLiked = tweet.likedBy && tweet.likedBy.includes(getUserIdentifier());
                     postElement.innerHTML = `
                         <div class="post-header">
-                            <span class="anonymous-user">Talk</span>
+                            <span class="anonymous-user">Anonymous</span>
                             <span class="timestamp">${timestamp}</span>
                         </div>
                         <div class="post-content">${escapeHTML(tweet.content)}</div>
+                        <div class="like-section">
+                            <button class="like-btn ${isLiked ? 'liked' : ''}" data-id="${tweet.id}">
+                                ❤️ ${tweet.likes || 0}
+                            </button>
+                        </div>
                     `;
                     postsContainer.appendChild(postElement);
                 });
+
+                // Add event listeners to like buttons
+                document.querySelectorAll('.like-btn').forEach(btn => {
+                    btn.addEventListener('click', handleLike);
+                });
+            }
+
+            async function handleLike(event) {
+                const postId = event.target.dataset.id;
+                const postRef = doc(db, 'tweets', postId);
+                
+                try {
+                    const userId = getUserIdentifier();
+                    const postSnapshot = await getDoc(postRef);
+                    const postData = postSnapshot.data();
+                    const likedBy = postData.likedBy || [];
+                    const currentLikes = postData.likes || 0;
+
+                    if (likedBy.includes(userId)) {
+                        // Unlike
+                        await updateDoc(postRef, {
+                            likes: currentLikes - 1,
+                            likedBy: likedBy.filter(id => id !== userId)
+                        });
+                        console.log("Post unliked");
+                    } else {
+                        // Like
+                        await updateDoc(postRef, {
+                            likes: currentLikes + 1,
+                            likedBy: [...likedBy, userId]
+                        });
+                        console.log("Post liked");
+                    }
+                } catch (error) {
+                    console.error('Error updating likes:', error);
+                }
+            }
+
+            // Simple user identifier (using IP for demo; in production, use proper auth)
+            async function getUserIdentifier() {
+                try {
+                    const response = await fetch('https://api.ipify.org?format=json');
+                    const data = await response.json();
+                    return data.ip;
+                } catch (error) {
+                    console.error('Error getting IP:', error);
+                    return 'anonymous_' + Math.random().toString(36).substr(2, 9);
+                }
             }
 
             function escapeHTML(str) {
                 return str
-                    .replace(/&/g, '&')
-                    .replace(/</g, '<')
-                    .replace(/>/g, '>')
-                    .replace(/"/g, '"')
-                    .replace(/'/g, '');
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
             }
+
+            // Import getDoc for the handleLike function
+            import { getDoc } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
 
         } catch (error) {
             console.error("Firebase initialization error:", error);
