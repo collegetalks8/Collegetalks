@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>College Talks</title>
+    <title>College Friends</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,16 +14,82 @@
         }
 
         body {
-            background: linear-gradient(135deg, #e0f7fa, #b2ebf2, #80deea); /* Gradient background */
+            background: #e6f3ff;
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background: linear-gradient(135deg, #e6f3ff, #b3d9ff, #80bfff); }
+            25% { background: linear-gradient(135deg, #b3d9ff, #80bfff, #99ccff); }
+            50% { background: linear-gradient(135deg, #80bfff, #99ccff, #cce6ff); }
+            75% { background: linear-gradient(135deg, #99ccff, #cce6ff, #b3d9ff); }
+            100% { background: linear-gradient(135deg, #e6f3ff, #b3d9ff, #80bfff); }
+        }
+
+        /* Animated Background Elements */
+        .background-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .animated-text {
+            position: absolute;
+            color: rgba(29, 161, 242, 0.3);
+            font-size: 20px;
+            white-space: nowrap;
+            animation: moveText 20s linear infinite;
+        }
+
+        @keyframes moveText {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .love-symbol {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(255, 105, 180, 0.5); /* Pink hearts */
+            animation: floatHeart 10s ease-in-out infinite;
+        }
+
+        @keyframes floatHeart {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            20% { opacity: 0.8; }
+            80% { opacity: 0.8; }
+            100% { transform: translateY(-20vh) scale(1.2); opacity: 0; }
+        }
+
+        .chat-icon-bg {
+            position: absolute;
+            font-size: 30px;
+            color: rgba(29, 161, 242, 0.4);
+            animation: floatChat 15s ease-in-out infinite;
+        }
+
+        @keyframes floatChat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.6; }
+            80% { opacity: 0.6; }
+            100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
         }
 
         .container {
             max-width: 800px;
             margin: 20px auto;
             padding: 0 20px;
+            position: relative;
+            z-index: 1; /* Above background elements */
         }
 
         .header {
@@ -32,7 +99,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            background: linear-gradient(45deg, #1DA1F2, #42c8f5); /* Gradient for header */
+            background: linear-gradient(45deg, #1DA1F2, #42c8f5);
             padding: 15px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
@@ -46,61 +113,138 @@
 
         .header h1 {
             font-size: 28px;
-            color: white; /* White text on gradient */
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2); /* Subtle shadow for readability */
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .post-form {
-            background: linear-gradient(135deg, #ffffff, #f0f8ff); /* Subtle gradient for form */
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #fff3e0, #ffffff);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(29, 161, 242, 0.2);
             margin-bottom: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animation for hover */
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .post-form:hover {
-            transform: translateY(-5px); /* Lift effect */
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(29, 161, 242, 0.3);
+        }
+
+        .post-form::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(29, 161, 242, 0.1) 10%, transparent 40%);
+            opacity: 0.5;
+            pointer-events: none;
+            animation: pulse 8s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
 
         .post-input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 12px 15px;
+            border: 2px solid #b3d9ff;
+            border-radius: 8px;
             resize: none;
-            margin-bottom: 10px;
-            min-height: 100px;
-            background: rgba(255, 255, 255, 0.9);
-            transition: border-color 0.3s ease;
+            margin-bottom: 15px;
+            min-height: 120px;
+            background: rgba(255, 255, 255, 0.95);
+            font-size: 16px;
+            color: #333;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
         }
 
         .post-input:focus {
             border-color: #1DA1F2;
+            box-shadow: 0 0 10px rgba(29, 161, 242, 0.3);
+            transform: scale(1.01);
             outline: none;
         }
 
         .post-btn {
-            background: linear-gradient(45deg, #1DA1F2, #42c8f5); /* Gradient button */
+            background: linear-gradient(45deg, #1DA1F2, #42c8f5);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 12px 25px;
+            border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
             transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
         }
 
         .post-btn:hover {
-            background: linear-gradient(45deg, #1a91da, #3ab8e5); /* Darker gradient on hover */
-            transform: scale(1.05); /* Slight scale up */
-            box-shadow: 0 4px 15px rgba(29, 161, 242, 0.4); /* Glow effect */
+            background: linear-gradient(45deg, #1a91da, #3ab8e5);
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(29, 161, 242, 0.5);
         }
 
         .post-btn:active {
-            transform: scale(0.95); /* Pressed effect */
+            transform: scale(0.95);
             box-shadow: 0 2px 10px rgba(29, 161, 242, 0.3);
+        }
+
+        .post-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .post-btn:hover::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+        .filter-btn {
+            background: linear-gradient(45deg, #1DA1F2, #42c8f5);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: transform 0.2s ease, background 0.3s ease, box-shadow 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            background: linear-gradient(45deg, #1a91da, #3ab8e5);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(29, 161, 242, 0.4);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(45deg, #007bb5, #1DA1F2);
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(29, 161, 242, 0.6);
         }
 
         .posts-container {
@@ -110,7 +254,7 @@
         }
 
         .post {
-            background: linear-gradient(135deg, #ffffff, #f9f9f9); /* Subtle gradient for posts */
+            background: linear-gradient(135deg, #ffffff, #e6f3ff);
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -118,7 +262,7 @@
         }
 
         .post:hover {
-            transform: translateY(-3px); /* Slight lift on hover */
+            transform: translateY(-3px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
         }
 
@@ -141,25 +285,147 @@
 
         .post-content {
             word-wrap: break-word;
+            margin-bottom: 10px;
+        }
+
+        .chat-icon {
+            margin-right: 5px;
+            color: #1DA1F2;
+        }
+
+        .reply-btn {
+            background: none;
+            border: none;
+            color: #1DA1F2;
+            cursor: pointer;
+            font-size: 0.9em;
+            padding: 5px;
+            transition: color 0.2s ease;
+        }
+
+        .reply-btn:hover {
+            color: #1a91da;
+        }
+
+        .reply-form {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+        }
+
+        .reply-label {
+            font-weight: bold;
+            color: #1DA1F2;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .reply-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #b3d9ff;
+            border-radius: 4px;
+            resize: none;
+            min-height: 60px;
+            margin-bottom: 5px;
+        }
+
+        .reply-submit {
+            background: linear-gradient(45deg, #1DA1F2, #42c8f5);
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.3s ease;
+        }
+
+        .reply-submit:hover {
+            background: linear-gradient(45deg, #1a91da, #3ab8e5);
+            transform: scale(1.05);
+        }
+
+        .replies {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .reply {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9em;
+        }
+
+        .reply-icon {
+            margin-right: 5px;
+            color: #1DA1F2;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #1DA1F2, #42c8f5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(29, 161, 242, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 10;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            background: linear-gradient(45deg, #1a91da, #3ab8e5);
+            transform: scale(1.1);
+        }
+
+        .back-to-top:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
 <body>
+    <div class="background-elements" id="backgroundElements"></div>
+
     <div class="container">
         <div class="header">
-            <img src="https://github.com/collegetalks8/Collegetalks/blob/main/g0dUXswaGClsVf2N-generated_image-photoaidcom-cropped.jpg?raw=true" alt="College Talks Logo" class="header-logo">
-            <h1>College Talks</h1>
+            <img src="g0dUXswaGClsVf2N-generated_image-photoaidcom-cropped.jpg" alt="College Friends Logo" class="header-logo">
+            <h1>College Friends</h1>
         </div>
 
         <div class="post-form">
-            <textarea class="post-input" placeholder="What's on your mind?"></textarea>
+            <textarea class="post-input" placeholder="What's on your mind, friend?"></textarea>
             <button class="post-btn">Post</button>
+            <div class="filter-options">
+                <button class="filter-btn active" id="latestPostsBtn">Latest Posts</button>
+                <button class="filter-btn" id="todayPostsBtn">Today’s Posts</button>
+            </div>
         </div>
 
         <div class="posts-container" id="postsContainer">
             <!-- Posts will be added here dynamically -->
         </div>
     </div>
+
+    <button class="back-to-top" id="backToTop" title="Back to Top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
     <script type="module">
         // Import Firebase modules
@@ -197,6 +463,48 @@
             const postInput = document.querySelector('.post-input');
             const postBtn = document.querySelector('.post-btn');
             const postsContainer = document.getElementById('postsContainer');
+            const backToTopBtn = document.getElementById('backToTop');
+            const latestPostsBtn = document.getElementById('latestPostsBtn');
+            const todayPostsBtn = document.getElementById('todayPostsBtn');
+            const backgroundElements = document.getElementById('backgroundElements');
+
+            let currentFilter = 'latest'; // Default filter
+
+            // Add animated background elements
+            function createBackgroundElements() {
+                const texts = ['College Friends', 'Chat', 'Connect', 'Share'];
+                const numElements = 20; // Total elements (text + hearts + chat icons)
+
+                for (let i = 0; i < numElements; i++) {
+                    const type = i % 3; // Cycle through 0: text, 1: heart, 2: chat icon
+                    const element = document.createElement('span');
+                    const left = Math.random() * 100; // Random horizontal position
+                    const delay = Math.random() * 10; // Random delay for animation
+
+                    if (type === 0) { // Animated Text
+                        element.className = 'animated-text';
+                        element.textContent = texts[Math.floor(Math.random() * texts.length)];
+                        element.style.left = `${left}vw`;
+                        element.style.animationDelay = `${delay}s`;
+                        element.style.top = `${Math.random() * 100}vh`;
+                    } else if (type === 1) { // Love Symbol (Heart)
+                        element.className = 'love-symbol';
+                        element.innerHTML = '<i class="fas fa-heart"></i>';
+                        element.style.left = `${left}vw`;
+                        element.style.animationDelay = `${delay}s`;
+                    } else { // Chat Icon
+                        element.className = 'chat-icon-bg';
+                        element.innerHTML = '<i class="fas fa-comment"></i>';
+                        element.style.left = `${left}vw`;
+                        element.style.animationDelay = `${delay}s`;
+                    }
+
+                    backgroundElements.appendChild(element);
+                }
+            }
+
+            // Initialize background elements
+            createBackgroundElements();
 
             // Add post when button is clicked
             postBtn.addEventListener('click', () => {
@@ -210,6 +518,37 @@
                     e.preventDefault();
                     addPost();
                 }
+            });
+
+            // Back to Top functionality
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+
+            // Filter buttons functionality
+            latestPostsBtn.addEventListener('click', () => {
+                currentFilter = 'latest';
+                latestPostsBtn.classList.add('active');
+                todayPostsBtn.classList.remove('active');
+                fetchPosts();
+            });
+
+            todayPostsBtn.addEventListener('click', () => {
+                currentFilter = 'today';
+                todayPostsBtn.classList.add('active');
+                latestPostsBtn.classList.remove('active');
+                fetchPosts();
             });
 
             async function addPost() {
@@ -230,22 +569,38 @@
                 }
             }
 
-            // Real-time listener for tweets
-            const q = query(
-                collection(db, 'tweets'),
-                orderBy('timestamp', 'desc'),
-                limit(50)
-            );
+            // Fetch and filter posts
+            function fetchPosts() {
+                const q = query(
+                    collection(db, 'tweets'),
+                    orderBy('timestamp', 'desc'),
+                    limit(50)
+                );
 
-            onSnapshot(q, (snapshot) => {
-                const tweets = [];
-                snapshot.forEach(doc => {
-                    tweets.push({ id: doc.id, ...doc.data() });
+                onSnapshot(q, (snapshot) => {
+                    const tweets = [];
+                    snapshot.forEach(doc => {
+                        tweets.push({ id: doc.id, ...doc.data() });
+                    });
+
+                    if (currentFilter === 'today') {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0); // Start of today
+                        const filteredTweets = tweets.filter(tweet => {
+                            const tweetDate = tweet.timestamp.toDate ? tweet.timestamp.toDate() : new Date(tweet.timestamp);
+                            return tweetDate >= today;
+                        });
+                        renderPosts(filteredTweets);
+                    } else {
+                        renderPosts(tweets); // All latest posts
+                    }
+                }, (error) => {
+                    console.error('Error fetching tweets:', error);
                 });
-                renderPosts(tweets);
-            }, (error) => {
-                console.error('Error fetching tweets:', error);
-            });
+            }
+
+            // Initial fetch
+            fetchPosts();
 
             function renderPosts(tweets) {
                 postsContainer.innerHTML = '';
@@ -263,12 +618,83 @@
                     
                     postElement.innerHTML = `
                         <div class="post-header">
-                            <span class="anonymous-user">Talk</span>
+                            <span class="anonymous-user"><i class="fas fa-comment chat-icon"></i>Friend</span>
                             <span class="timestamp">${timestamp}</span>
                         </div>
                         <div class="post-content">${escapeHTML(tweet.content)}</div>
+                        <button class="reply-btn" data-tweet-id="${tweet.id}"><i class="fas fa-reply reply-icon"></i>Reply</button>
+                        <div class="reply-form" id="reply-form-${tweet.id}">
+                            <span class="reply-label">Write Reply</span>
+                            <textarea class="reply-input" placeholder="Type your reply here..."></textarea>
+                            <button class="reply-submit" data-tweet-id="${tweet.id}">Submit Reply</button>
+                        </div>
+                        <div class="replies" id="replies-${tweet.id}"></div>
                     `;
                     postsContainer.appendChild(postElement);
+
+                    // Load replies for this tweet
+                    loadReplies(tweet.id);
+                });
+
+                // Add event listeners for reply buttons
+                document.querySelectorAll('.reply-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const tweetId = btn.getAttribute('data-tweet-id');
+                        const replyForm = document.getElementById(`reply-form-${tweetId}`);
+                        replyForm.style.display = replyForm.style.display === 'block' ? 'none' : 'block';
+                    });
+                });
+
+                // Add event listeners for reply submit buttons
+                document.querySelectorAll('.reply-submit').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const tweetId = btn.getAttribute('data-tweet-id');
+                        submitReply(tweetId);
+                    });
+                });
+            }
+
+            async function submitReply(tweetId) {
+                const replyInput = document.querySelector(`#reply-form-${tweetId} .reply-input`);
+                const replyContent = replyInput.value.trim();
+                if (replyContent) {
+                    try {
+                        await addDoc(collection(db, 'tweets', tweetId, 'replies'), {
+                            content: replyContent,
+                            timestamp: new Date()
+                        });
+                        console.log("Reply added successfully");
+                        replyInput.value = '';
+                        document.getElementById(`reply-form-${tweetId}`).style.display = 'none';
+                    } catch (error) {
+                        console.error('Error adding reply:', error);
+                    }
+                } else {
+                    console.log("No reply content to post");
+                }
+            }
+
+            function loadReplies(tweetId) {
+                const repliesContainer = document.getElementById(`replies-${tweetId}`);
+                const q = query(
+                    collection(db, 'tweets', tweetId, 'replies'),
+                    orderBy('timestamp', 'asc')
+                );
+                onSnapshot(q, (snapshot) => {
+                    repliesContainer.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const reply = doc.data();
+                        const replyElement = document.createElement('div');
+                        replyElement.className = 'reply';
+                        const replyTimestamp = reply.timestamp.toDate ? reply.timestamp.toDate().toLocaleString() : new Date(reply.timestamp).toLocaleString();
+                        replyElement.innerHTML = `
+                            <strong><i class="fas fa-reply reply-icon"></i>Reply:</strong> ${escapeHTML(reply.content)}<br>
+                            <span class="timestamp">${replyTimestamp}</span>
+                        `;
+                        repliesContainer.appendChild(replyElement);
+                    });
+                }, (error) => {
+                    console.error('Error fetching replies:', error);
                 });
             }
 
@@ -280,7 +706,6 @@
                     .replace(/"/g, '"')
                     .replace(/'/g, '');
             }
-
         } catch (error) {
             console.error("Firebase initialization error:", error);
         }
